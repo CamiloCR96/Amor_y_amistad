@@ -7,6 +7,8 @@ import { getCriticalIssues } from "@/lib/env";
 import { findParticipant, participants } from "@/lib/participants";
 import { resetReveals } from "@/lib/reveals";
 
+export type ResetResult = { ok: boolean; message: string };
+
 export async function loginAction(formData: FormData): Promise<void> {
   if (getCriticalIssues().length) redirect("/admin");
   const password = String(formData.get("password") ?? "");
@@ -20,20 +22,24 @@ export async function logoutAction(): Promise<void> {
   redirect("/admin");
 }
 
-// Reinicia el registro de todo el mundo. Solo el organizador.
-export async function resetAllAction(): Promise<void> {
-  if (!(await isAdmin())) redirect("/admin");
+const SESION_VENCIDA = "Tu sesion del panel vencio. Recarga la pagina y vuelve a entrar.";
+
+// Devuelven el resultado en vez de redirigir: el panel lo muestra sin recargar.
+export async function resetAllAction(): Promise<ResetResult> {
+  if (!(await isAdmin())) return { ok: false, message: SESION_VENCIDA };
   await resetReveals(participants.map((p) => p.slug));
   revalidatePath("/admin");
-  redirect("/admin?ok=todos");
+  return {
+    ok: true,
+    message: "Listo: se reinició el registro de todos. Ya pueden volver a elegir su nombre.",
+  };
 }
 
-// Reinicia el registro de una sola persona, por si alguien abrio su enlace sin querer.
-export async function resetOneAction(formData: FormData): Promise<void> {
-  if (!(await isAdmin())) redirect("/admin");
-  const slug = String(formData.get("slug") ?? "");
-  if (!findParticipant(slug)) redirect("/admin");
-  await resetReveals([slug]);
+export async function resetOneAction(slug: string): Promise<ResetResult> {
+  if (!(await isAdmin())) return { ok: false, message: SESION_VENCIDA };
+  const person = findParticipant(String(slug ?? ""));
+  if (!person) return { ok: false, message: "Esa persona ya no esta en la lista." };
+  await resetReveals([person.slug]);
   revalidatePath("/admin");
-  redirect(`/admin?ok=${encodeURIComponent(slug)}`);
+  return { ok: true, message: `Listo: se reinició el registro de ${person.name}.` };
 }

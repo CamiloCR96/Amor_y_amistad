@@ -1,10 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import Graph from "./Graph";
 import CopyButton from "./CopyButton";
 import GiftBanner from "./GiftBanner";
-import { logoutAction, resetAllAction, resetOneAction } from "@/app/admin/actions";
+import {
+  logoutAction,
+  resetAllAction,
+  resetOneAction,
+  type ResetResult,
+} from "@/app/admin/actions";
 
 export type AdminRow = {
   slug: string;
@@ -20,7 +26,6 @@ type Props = {
   drawId: string;
   warnings: string[];
   storeKind: "redis" | "memory";
-  notice: string | null;
   groupLink: string;
 };
 
@@ -37,11 +42,29 @@ export default function AdminDashboard({
   drawId,
   warnings,
   storeKind,
-  notice,
   groupLink,
 }: Props) {
   const [askReset, setAskReset] = useState(false);
   const [showLinks, setShowLinks] = useState(false);
+  const [flash, setFlash] = useState<string | null>(null);
+  const [busy, startReset] = useTransition();
+  const router = useRouter();
+
+  // Se llama la accion directamente. Con un <form> el boton cerraba el modal,
+  // el formulario se desmontaba a mitad del envio y la peticion se cancelaba.
+  function runReset(run: () => Promise<ResetResult>) {
+    setFlash(null);
+    startReset(async () => {
+      try {
+        const res = await run();
+        setFlash(res.message);
+      } catch {
+        setFlash("No se pudo reiniciar. Revisa la conexion e intenta otra vez.");
+      }
+      setAskReset(false);
+      router.refresh();
+    });
+  }
   const revealed = rows.filter((r) => r.revealedLabel).length;
   const people = rows.map((r) => ({ slug: r.slug, name: r.name }));
   const edges = rows.map((r) => ({ from: r.slug, to: r.targetSlug }));
@@ -75,9 +98,9 @@ export default function AdminDashboard({
         </form>
       </header>
 
-      {notice && (
+      {flash && (
         <p className="notice-ok" role="status">
-          {notice}
+          {flash}
         </p>
       )}
 
@@ -177,12 +200,14 @@ export default function AdminDashboard({
                   <CopyButton text={r.link} label="Copiar enlace" />
                   <CopyButton text={messageFor(r)} label="Copiar mensaje" />
                   {r.revealedLabel && (
-                    <form action={resetOneAction}>
-                      <input type="hidden" name="slug" value={r.slug} />
-                      <button type="submit" className="btn btn-small btn-warn">
-                        Reiniciar
-                      </button>
-                    </form>
+                    <button
+                      type="button"
+                      className="btn btn-small btn-warn"
+                      disabled={busy}
+                      onClick={() => runReset(() => resetOneAction(r.slug))}
+                    >
+                      Reiniciar
+                    </button>
                   )}
                 </td>
               </tr>
@@ -201,7 +226,12 @@ export default function AdminDashboard({
               eso se calcula del secreto, no del registro.
             </p>
           </div>
-          <button type="button" className="btn btn-warn" onClick={() => setAskReset(true)}>
+          <button
+            type="button"
+            className="btn btn-warn"
+            disabled={busy}
+            onClick={() => setAskReset(true)}
+          >
             Reiniciar los {rows.length} votos
           </button>
         </div>
@@ -231,14 +261,22 @@ export default function AdminDashboard({
               sorteo no cambian.
             </p>
             <div className="modal-actions">
-              <button type="button" className="btn btn-ghost" onClick={() => setAskReset(false)}>
+              <button
+                type="button"
+                className="btn btn-ghost"
+                disabled={busy}
+                onClick={() => setAskReset(false)}
+              >
                 Cancelar
               </button>
-              <form action={resetAllAction}>
-                <button type="submit" className="btn btn-warn" onClick={() => setAskReset(false)}>
-                  Sí, reiniciar todo
-                </button>
-              </form>
+              <button
+                type="button"
+                className="btn btn-warn"
+                disabled={busy}
+                onClick={() => runReset(resetAllAction)}
+              >
+                {busy ? "Reiniciando..." : "Sí, reiniciar todo"}
+              </button>
             </div>
           </div>
         </div>

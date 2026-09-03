@@ -5,7 +5,7 @@ import { isAdmin } from "@/lib/admin-auth";
 import { getDraw, targetOf } from "@/lib/draw";
 import { getAdminPassword, getAdminWarnings, getCriticalIssues } from "@/lib/env";
 import { formatBogota } from "@/lib/format";
-import { findParticipant, participants } from "@/lib/participants";
+import { participants } from "@/lib/participants";
 import { getAllReveals } from "@/lib/reveals";
 import { getBaseUrl } from "@/lib/site";
 import { getStore } from "@/lib/store";
@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = { title: "Panel" };
 
-type Props = { searchParams: Promise<{ e?: string; ok?: string }> };
+type Props = { searchParams: Promise<{ e?: string }> };
 
 const ERRORS: Record<string, string> = {
   wrong: "Contraseña incorrecta.",
@@ -63,8 +63,6 @@ export default async function AdminPage({ searchParams }: Props) {
     return <LoginView error={e} disabled={!getAdminPassword()} />;
   }
 
-  const { ok } = await searchParams;
-
   const draw = getDraw();
   const base = await getBaseUrl();
   const reveals = await getAllReveals(participants.map((p) => p.slug));
@@ -82,19 +80,12 @@ export default async function AdminPage({ searchParams }: Props) {
     };
   });
 
-  const notice = ok
-    ? ok === "todos"
-      ? "Listo: se reinició el registro de todos. Ya pueden volver a elegir su nombre."
-      : `Listo: se reinició el registro de ${findParticipant(ok)?.name ?? ok}.`
-    : null;
-
   return (
     <AdminDashboard
       rows={rows}
       drawId={draw.id}
       warnings={getAdminWarnings()}
       storeKind={getStore().kind}
-      notice={notice}
       groupLink={base}
     />
   );
