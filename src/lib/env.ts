@@ -1,4 +1,4 @@
-import { participantIssues, participants } from "./participants";
+import { fixedEdgeIssues, fixedEdges, participantIssues, participants } from "./participants";
 
 const DEV_SECRET = "dev-secret-solo-para-pruebas-locales-cambialo";
 const DEV_ADMIN_PASSWORD = "admin";
@@ -46,6 +46,7 @@ export function getCriticalIssues(): string[] {
     );
   }
   issues.push(...participantIssues(participants));
+  issues.push(...fixedEdgeIssues(participants, fixedEdges));
   return issues;
 }
 

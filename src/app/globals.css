@@ -1259,3 +1259,252 @@ button.node:hover .node-body {
     display: none;
   }
 }
+
+/* Selector de nombre: la puerta de entrada del enlace unico */
+.picker {
+  padding: clamp(22px, 4vw, 32px);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    var(--shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  text-align: center;
+}
+
+.picker-title {
+  margin: 0 0 6px;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(28px, 5vw, 40px);
+  line-height: 1.1;
+}
+
+.picker-lede {
+  margin: 0 auto 18px;
+  max-width: 420px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.picker-search {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--ink);
+  font-size: 16px;
+}
+
+.picker-search::placeholder {
+  color: var(--faint);
+}
+
+.picker-search:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.picker-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 9px;
+}
+
+.picker-name {
+  position: relative;
+  width: 100%;
+  min-height: 54px;
+  padding: 11px 10px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition:
+    transform 0.18s var(--ease-out),
+    background 0.25s,
+    border-color 0.25s;
+}
+
+.picker-name:not(:disabled):hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 140, 175, 0.6);
+  background: rgba(255, 93, 143, 0.18);
+}
+
+.picker-name:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.picker-name-taken {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.picker-name-text {
+  display: block;
+}
+
+.picker-badge {
+  display: block;
+  margin-top: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.picker-empty,
+.picker-count {
+  margin: 14px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.picker-help-link {
+  margin-top: 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--gold);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.picker-help-link:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.picker-help {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 190, 90, 0.45);
+  background: rgba(255, 190, 90, 0.1);
+  text-align: left;
+  font-size: 14px;
+  color: #ffe8c4;
+}
+
+.picker-help p {
+  margin: 0;
+}
+
+.picker-help p + p {
+  margin-top: 8px;
+}
+
+.modal-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+/* Reinicio de votos en el panel */
+.btn-warn {
+  border-color: rgba(255, 150, 120, 0.5);
+  background: rgba(255, 110, 90, 0.16);
+  color: #ffd9cd;
+}
+
+.btn-warn:hover {
+  background: rgba(255, 110, 90, 0.28);
+}
+
+.reset-zone {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 150, 120, 0.35);
+  background: rgba(255, 110, 90, 0.08);
+}
+
+.reset-title {
+  margin: 0 0 4px;
+  font-weight: 700;
+  font-size: 15px;
+  color: #ffd9cd;
+}
+
+.reset-copy {
+  margin: 0;
+  max-width: 460px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.reset-copy strong {
+  color: var(--ink);
+}
+
+.notice-ok {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(120, 220, 160, 0.5);
+  background: rgba(120, 220, 160, 0.13);
+  font-size: 14px;
+  color: #c8f5da;
+}
+
+.td-actions form {
+  display: inline;
+}
+
+/* El enlace unico que se manda al grupo */
+.group-link {
+  width: 100%;
+  max-width: 640px;
+  padding: clamp(18px, 3vw, 26px);
+  border-radius: var(--radius);
+  border: 1px solid rgba(244, 199, 107, 0.4);
+  background: linear-gradient(150deg, rgba(244, 199, 107, 0.14), rgba(255, 93, 143, 0.1));
+  text-align: center;
+}
+
+.group-link-url {
+  margin: 4px 0 10px;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: clamp(15px, 2.2vw, 19px);
+  font-weight: 600;
+  color: var(--gold);
+  overflow-wrap: anywhere;
+}
+
+.group-link-copy {
+  margin: 0 auto 16px;
+  max-width: 460px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.group-link-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.hint-wide {
+  max-width: 620px;
+}

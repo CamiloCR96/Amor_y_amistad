@@ -9,6 +9,7 @@ export interface Store {
   setIfAbsent<T extends JsonValue>(key: string, value: T): Promise<T>;
   getMany<T extends JsonValue>(keys: string[]): Promise<(T | null)[]>;
   incrWithTtl(key: string, ttlSeconds: number): Promise<number>;
+  deleteMany(keys: string[]): Promise<void>;
 }
 
 class RedisStore implements Store {
@@ -33,6 +34,11 @@ class RedisStore implements Store {
     // quedaria sin vencimiento y esa IP no podria volver a entrar nunca.
     await this.r.expire(key, ttlSeconds);
     return n;
+  }
+
+  async deleteMany(keys: string[]): Promise<void> {
+    if (keys.length === 0) return;
+    await this.r.del(...keys);
   }
 }
 
@@ -67,6 +73,11 @@ class TcpRedisStore implements Store {
     const n = await this.r.incr(key);
     await this.r.expire(key, ttlSeconds);
     return n;
+  }
+
+  async deleteMany(keys: string[]): Promise<void> {
+    if (keys.length === 0) return;
+    await this.r.del(...keys);
   }
 }
 
@@ -105,6 +116,10 @@ class MemoryStore implements Store {
       expiresAt: e?.expiresAt ?? Date.now() + ttlSeconds * 1000,
     });
     return n;
+  }
+
+  async deleteMany(keys: string[]): Promise<void> {
+    for (const k of keys) this.map.delete(k);
   }
 }
 

@@ -20,6 +20,13 @@ export async function reveal(slug: string, now = new Date()): Promise<RevealReco
   return { at: stored.at, first: stored.at === attempt.at };
 }
 
+// Borra el registro de revelacion. Quien lo tenga borrado vuelve a ver el
+// boton y puede revelar otra vez. La persona que le toca NO cambia: el
+// sorteo se recalcula siempre del secreto.
+export async function resetReveals(slugs: string[]): Promise<void> {
+  await getStore().deleteMany(slugs.map(key));
+}
+
 export async function getAllReveals(slugs: string[]): Promise<Map<string, string | null>> {
   const recs = await getStore().getMany<RevealRecord>(slugs.map(key));
   return new Map(slugs.map((s, i) => [s, recs[i]?.at ?? null]));
