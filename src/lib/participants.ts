@@ -31,8 +31,9 @@ export const participants: Participant[] = [
 // "from le regala a to". Una persona solo puede aparecer una vez como `from`
 // y una vez como `to`.
 export const fixedEdges: FixedEdge[] = [
-  { from: "camilo", to: "valeria" },
+  { from: "aurorita", to: "sergio" },
   { from: "sergio", to: "camilo" },
+  { from: "camilo", to: "valeria" },
 ];
 
 const SLUG_RE = /^[a-z0-9][a-z0-9-]{0,40}$/;
