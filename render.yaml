@@ -1,0 +1,33 @@
+# Blueprint de Render. Con esto, Render crea el sitio y su Redis de una vez.
+services:
+  - type: web
+    name: amor-y-amistad
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: pnpm install && pnpm build
+    startCommand: pnpm start
+    healthCheckPath: /
+    envVars:
+      # Firma los enlaces personales y la sesion del panel.
+      # Render genera un valor aleatorio la primera vez y no lo vuelve a tocar.
+      - key: APP_SECRET
+        generateValue: true
+      # La contraseña con la que entras a /admin. La escribes tu al desplegar.
+      - key: ADMIN_PASSWORD
+        sync: false
+      # Se conecta solo al Key Value de abajo.
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: amor-y-amistad-kv
+          property: connectionString
+      - key: NODE_VERSION
+        value: "22"
+
+  - type: keyvalue
+    name: amor-y-amistad-kv
+    plan: free
+    region: oregon
+    maxmemoryPolicy: noeviction
+    ipAllowList: []

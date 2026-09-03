@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+.env
+.env.local
+.env.*.local
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+
+# Los regenera `next dev` en cada arranque, no son parte del proyecto.
+AGENTS.md
+CLAUDE.md
